@@ -1,19 +1,23 @@
 import static java.lang.System.exit;
+import java.util.logging.Logger;
 
 public class Pauvocoder {
 
+    // Add this logger declaration
+    private static final Logger LOGGER = Logger.getLogger(Pauvocoder.class.getName());
+
     // Processing SEQUENCE size (100 msec with 44100Hz samplerate)
-    final static int SEQUENCE = StdAudio.SAMPLE_RATE/10;
+    static final int SEQUENCE = StdAudio.SAMPLE_RATE/10;
 
     // Overlapping size (20 msec)
-    final static int OVERLAP = SEQUENCE/5 ;
+    static final int OVERLAP = SEQUENCE/5 ;
     // Best OVERLAP offset seeking window (15 msec)
-    final static int SEEK_WINDOW = 3*OVERLAP/4;
+    static final int SEEK_WINDOW = 3*OVERLAP/4;
 
     public static void main(String[] args) {
         if (args.length < 2)
         {
-            System.out.println("usage: pauvocoder <input.wav> <freqScale>\n");
+            LOGGER.severe("usage: pauvocoder <input.wav> <freqScale>");
             exit(1);
         }
 
