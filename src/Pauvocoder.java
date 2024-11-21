@@ -63,6 +63,8 @@ public class Pauvocoder {
      * @return resampled wav
      */
     public static double[] resample(double[] inputWav, double freqScale) {
+        double[] outputWav = new double[inputWav.length];
+
         for (int i = 0; i < inputWav.length; i++) {
             if (freqScale > 1) {
                 double newX = (freqScale - 1) / freqScale;
@@ -70,8 +72,9 @@ public class Pauvocoder {
                 double newX = (1 - freqScale) / freqScale;
             }
         }
+        return outputWav;
     }
-
+    
     /**
      * Simple dilatation, without any overlapping
      * @param inputWav
