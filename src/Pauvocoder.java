@@ -64,9 +64,12 @@ public class Pauvocoder {
      */
     public static double[] resample(double[] inputWav, double freqScale) {
         for (int i = 0; i < inputWav.length; i++) {
-            inputWav[i] = inputWav[i] * freqScale;
+            if (freqScale > 1) {
+                double newX = (freqScale - 1) / freqScale;
+            } else {
+                double newX = (1 - freqScale) / freqScale;
+            }
         }
-        return inputWav;
     }
 
     /**
