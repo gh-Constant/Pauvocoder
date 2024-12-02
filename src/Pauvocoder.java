@@ -63,32 +63,34 @@ public class Pauvocoder {
      * @return resampled wav
      */
     public static double[] resample(double[] inputWav, double freqScale) {
-
-        int newLength = (int) (inputWav.length * freqScale);
-        double[] resampledWav = new double[newLength];
-
-
-
-        for (int i = 0; i < inputWav.length; i++) {
-            if (freqScale > 1) {
-                double echToSuppr = ((freqScale - 1) / freqScale);
-
-                for(int j = 0; j < inputWav.length - echToSuppr; j++) {
-                    resampledWav[i] = inputWav[i];
+        int newSize = (int)(inputWav.length / freqScale);
+        double[] output = new double[newSize];
+        
+        if (freqScale > 1) {
+            // Sous-échantillonnage
+            for (int i = 0; i < newSize; i++) {
+                int pos = (int)(i * freqScale);
+                if (pos < inputWav.length) {
+                    output[i] = inputWav[pos];
                 }
-            
-
-            } else {
-                double echToAdd = ((1 - freqScale) / freqScale);
-
-                for(int j = 0; j < inputWav.length; j++) {
-                    
+            }
+        } else {
+            // Sur-échantillonnage
+            for (int i = 0; i < newSize; i++) {
+                double exactPos = i * freqScale;
+                int pos = (int)exactPos;
+                
+                if (pos >= inputWav.length - 1) {
+                    output[i] = inputWav[inputWav.length - 1];
+                    continue;
                 }
-                // ajouter régulièrement des échantillons interpolés entre les échantillons d'origine pour obtenir un signal plus long.
+                
+                double ratio = exactPos - pos;
+                output[i] = inputWav[pos] * (1.0 - ratio) + inputWav[pos + 1] * ratio;
             }
         }
-
-        return resampledWav;
+        
+        return output;
     }
 
     /**
@@ -136,9 +138,6 @@ public class Pauvocoder {
      * @param gain
      * @return wav with echo
      */
-    public static double[] echo(double[] wav, double delay, double gain) {
-        throw new UnsupportedOperationException(NOT_IMPLEMENTED);
-    }
 
     /**
      * Display the waveform
