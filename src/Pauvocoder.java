@@ -1,25 +1,29 @@
 import static java.lang.System.exit;
+import java.util.logging.Logger;
 
 public class Pauvocoder {
 
+    private static final Logger LOGGER = Logger.getLogger(Pauvocoder.class.getName());
+    private static final String NOT_IMPLEMENTED = "Not implemented yet";
+
     // Processing SEQUENCE size (100 msec with 44100Hz samplerate)
-    final static int SEQUENCE = StdAudio.SAMPLE_RATE/10;
+    static final int SEQUENCE = StdAudio.SAMPLE_RATE/10;
 
     // Overlapping size (20 msec)
-    final static int OVERLAP = SEQUENCE/5 ;
+    static final int OVERLAP = SEQUENCE/5 ;
     // Best OVERLAP offset seeking window (15 msec)
-    final static int SEEK_WINDOW = 3*OVERLAP/4;
+    static final int SEEK_WINDOW = 3*OVERLAP/4;
 
     public static void main(String[] args) {
         if (args.length < 2)
         {
-            System.out.println("usage: pauvocoder <input.wav> <freqScale>\n");
+            LOGGER.severe("usage: pauvocoder <input.wav> <freqScale>");
             exit(1);
         }
 
 
         String wavInFile = args[0];
-        double freqScale = Double.valueOf(args[1]);
+        double freqScale = Double.parseDouble(args[1]);
         String outPutFile= wavInFile.split("\\.")[0] + "_" + freqScale +"_";
 
         // Open input .wev file
@@ -59,7 +63,32 @@ public class Pauvocoder {
      * @return resampled wav
      */
     public static double[] resample(double[] inputWav, double freqScale) {
-        throw new UnsupportedOperationException("Not implemented yet");
+
+        int newLength = (int) (inputWav.length * freqScale);
+        double[] resampledWav = new double[newLength];
+
+
+
+        for (int i = 0; i < inputWav.length; i++) {
+            if (freqScale > 1) {
+                double echToSuppr = ((freqScale - 1) / freqScale);
+
+                for(int j = 0; j < inputWav.length - echToSuppr; j++) {
+                    resampledWav[i] = inputWav[i];
+                }
+            
+
+            } else {
+                double echToAdd = ((1 - freqScale) / freqScale);
+
+                for(int j = 0; j < inputWav.length; j++) {
+                    
+                }
+                // ajouter régulièrement des échantillons interpolés entre les échantillons d'origine pour obtenir un signal plus long.
+            }
+        }
+
+        return resampledWav;
     }
 
     /**
@@ -69,7 +98,7 @@ public class Pauvocoder {
      * @return dilated wav
      */
     public static double[] vocodeSimple(double[] inputWav, double dilatation) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        throw new UnsupportedOperationException(NOT_IMPLEMENTED);
     }
 
     /**
@@ -79,7 +108,7 @@ public class Pauvocoder {
      * @return dilated wav
      */
     public static double[] vocodeSimpleOver(double[] inputWav, double dilatation) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        throw new UnsupportedOperationException(NOT_IMPLEMENTED);
     }
 
     /**
@@ -89,7 +118,7 @@ public class Pauvocoder {
      * @return dilated wav
      */
     public static double[] vocodeSimpleOverCross(double[] inputWav, double dilatation) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        throw new UnsupportedOperationException(NOT_IMPLEMENTED);
     }
 
     /**
@@ -97,7 +126,7 @@ public class Pauvocoder {
      * @param wav
      */
     public static void joue(double[] wav) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        throw new UnsupportedOperationException(NOT_IMPLEMENTED);
     }
 
     /**
@@ -108,7 +137,7 @@ public class Pauvocoder {
      * @return wav with echo
      */
     public static double[] echo(double[] wav, double delay, double gain) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        throw new UnsupportedOperationException(NOT_IMPLEMENTED);
     }
 
     /**
@@ -116,7 +145,7 @@ public class Pauvocoder {
      * @param wav
      */
     public static void displayWaveform(double[] wav) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        throw new UnsupportedOperationException(NOT_IMPLEMENTED);
     }
 
 
