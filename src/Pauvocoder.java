@@ -3,6 +3,9 @@ import java.util.logging.Logger;
 
 public class Pauvocoder {
 
+    private static final Logger LOGGER = Logger.getLogger(Pauvocoder.class.getName());
+    private static final String NOT_IMPLEMENTED = "Not implemented yet";
+
     // Processing SEQUENCE size (100 msec with 44100Hz samplerate)
     static final int SEQUENCE = StdAudio.SAMPLE_RATE/10;
 
@@ -60,9 +63,34 @@ public class Pauvocoder {
      * @return resampled wav
      */
     public static double[] resample(double[] inputWav, double freqScale) {
-        throw new UnsupportedOperationException("Not implemented yet");
+
+        int newLength = (int) (inputWav.length * freqScale);
+        double[] resampledWav = new double[newLength];
+
+
+
+        for (int i = 0; i < inputWav.length; i++) {
+            if (freqScale > 1) {
+                double echToSuppr = ((freqScale - 1) / freqScale);
+
+                for(int j = 0; j < inputWav.length - echToSuppr; j++) {
+                    resampledWav[i] = inputWav[i];
+                }
+            
+
+            } else {
+                double echToAdd = ((1 - freqScale) / freqScale);
+
+                for(int j = 0; j < inputWav.length; j++) {
+                    
+                }
+                // ajouter régulièrement des échantillons interpolés entre les échantillons d'origine pour obtenir un signal plus long.
+            }
+        }
+
+        return resampledWav;
     }
-    
+
     /**
      * Simple dilatation, without any overlapping
      * @param inputWav
