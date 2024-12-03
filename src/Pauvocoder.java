@@ -33,9 +33,16 @@ public class Pauvocoder {
         double[] newPitchWav = resample(inputWav, freqScale);
         StdAudio.save(outPutFile+"Resampled.wav", newPitchWav);
 
+        // Echo test
+        double[] echoWav = echo(newPitchWav, 1000, 0.2);
+        StdAudio.save(outPutFile+"Echo.wav", echoWav);
+
+
         // Simple dilatation
         double[] outputWav   = vocodeSimple(newPitchWav, 1.0/freqScale);
         StdAudio.save(outPutFile+"Simple.wav", outputWav);
+
+    
 
         // Simple dilatation with overlaping
         outputWav = vocodeSimpleOver(newPitchWav, 1.0/freqScale);
@@ -46,11 +53,6 @@ public class Pauvocoder {
         StdAudio.save(outPutFile+"SimpleOverCross.wav", outputWav);
 
         joue(outputWav);
-
-        // Some echo above all
-        //outputWav = echo(outputWav, 100, 0.7);
-       // StdAudio.save(outPutFile+"SimpleOverCrossEcho.wav", outputWav);
-
         // Display waveform
         displayWaveform(outputWav);
 
@@ -150,6 +152,32 @@ public class Pauvocoder {
      * @param gain
      * @return wav with echo
      */
+    public static double[] echo(double[] wav, int delayMs, double attn) {
+        int delaySamples = delayMs * StdAudio.SAMPLE_RATE / 1000;
+        double[] echo = new double[wav.length + delaySamples];
+
+        for (int i = 0; i < wav.length; i++) {
+            // Add the original signal
+            echo[i] += wav[i];
+
+            // Add the echo if within bounds
+            if (i + delaySamples < echo.length) {
+                echo[i + delaySamples] += wav[i] * attn;
+            }
+        }
+
+        // Ensure amplitude is within [-1, 1]
+        for (int i = 0; i < echo.length; i++) {
+            if (echo[i] > 1.0) {
+                echo[i] = 1.0;
+            } else if (echo[i] < -1.0) {
+                echo[i] = -1.0;
+            }
+        }
+
+        return echo;
+    }
+
 
     /**
      * Display the waveform
