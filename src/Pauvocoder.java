@@ -48,8 +48,8 @@ public class Pauvocoder {
         joue(outputWav);
 
         // Some echo above all
-        outputWav = echo(outputWav, 100, 0.7);
-        StdAudio.save(outPutFile+"SimpleOverCrossEcho.wav", outputWav);
+        //outputWav = echo(outputWav, 100, 0.7);
+       // StdAudio.save(outPutFile+"SimpleOverCrossEcho.wav", outputWav);
 
         // Display waveform
         displayWaveform(outputWav);
@@ -77,16 +77,28 @@ public class Pauvocoder {
         } else {
             // Sur-échantillonnage
             for (int i = 0; i < newSize; i++) {
-                double exactPos = i * freqScale;
-                int pos = (int)exactPos;
-                
-                if (pos >= inputWav.length - 1) {
-                    output[i] = inputWav[inputWav.length - 1];
-                    continue;
+                int indexInterpolation = (int)(i * freqScale);
+
+                if (i % 2 == 0) {
+                    // Copie l'échantillon existant
+                    output[i] = inputWav[indexInterpolation];
+
+                    if (indexInterpolation+1 >= inputWav.length) {
+                        output[i] = inputWav[indexInterpolation];
+                    }
+
+                } else {
+                    // Interpolation entre les échantillons adjacents
+
+                    if (indexInterpolation+1 >= inputWav.length) {
+                        output[i] = inputWav[indexInterpolation];
+                    } else {
+                        double pointBase = inputWav[indexInterpolation];
+                        double pointAdjacent = inputWav[indexInterpolation + 1];
+                        double interpolation = (pointBase + pointAdjacent) / 2.0;
+                        output[i] = (int) interpolation;
+                    }
                 }
-                
-                double ratio = exactPos - pos;
-                output[i] = inputWav[pos] * (1.0 - ratio) + inputWav[pos + 1] * ratio;
             }
         }
         
