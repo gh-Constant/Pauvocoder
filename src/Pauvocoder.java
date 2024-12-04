@@ -33,6 +33,9 @@ public class Pauvocoder {
         double[] newPitchWav = resample(inputWav, freqScale);
         StdAudio.save(outPutFile+"Resampled.wav", newPitchWav);
 
+        System.out.println("inputWav.length: " + inputWav.length);
+        System.out.println("newPitchWav.length: " + newPitchWav.length);
+
         // Echo test
         double[] echoWav = echo(newPitchWav, 1000, 0.2);
         StdAudio.save(outPutFile+"Echo.wav", echoWav);
@@ -67,7 +70,6 @@ public class Pauvocoder {
     public static double[] resample(double[] inputWav, double freqScale) {
         int newSize = (int)(inputWav.length / freqScale);
         double[] output = new double[newSize];
-        
         if (freqScale > 1) {
             // Sous-échantillonnage
             for (int i = 0; i < newSize; i++) {
@@ -114,22 +116,31 @@ public class Pauvocoder {
      * @return dilated wav
      */
     public static double[] vocodeSimple(double[] inputWav, double dilatation) {
-        // Nouvelle liste avec la taille dilatée
-        // Calculer le nombre d'échantillons
-        int nouvelleListe = (int)(inputWav.length * dilatation);
-        double[] output = new double[nouvelleListe];
+        // Calculer la taille approximative du tableau de sortie
+        int outputSize = (int)(inputWav.length / dilatation);
+        double[] outputWav = new double[outputSize];
 
-        int tailleNormale = inputWav.length;
-        int tailleDilatation = output.length;
-        int tailleSaut = 100; //100 ms
-        int tailleSautSamples = tailleSaut * StdAudio.SAMPLE_RATE / 1000;
+        int cutDuration = 100;
 
-        for (int i = 0; i < tailleDilatation; i++) {
-            output[i] = inputWav[i * tailleSautSample];
+        int valueToCut = StdAudio.SAMPLE_RATE / cutDuration;
+
+        // Calculer le saut entre chaque séquence
+        int saut = (int)(valueToCut * dilatation);
+        
+        // Position dans le tableau de sortie
+        int indexSortie = 0;
+        
+        // Pour chaque séquence
+        for (int indexEntree = 0; indexEntree < inputWav.length; indexEntree += saut) {
+            for (int i = 0; i < valueToCut; i++) {
+                if (indexEntree + i < inputWav.length && indexSortie + i < outputSize) {
+                    outputWav[indexSortie + i] = inputWav[indexEntree + i];
+                }
+            }
+            indexSortie += valueToCut;
         }
-
-        return output;
-
+        
+        return outputWav;
     }
 
     /**
