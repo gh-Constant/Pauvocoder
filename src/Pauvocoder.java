@@ -114,7 +114,22 @@ public class Pauvocoder {
      * @return dilated wav
      */
     public static double[] vocodeSimple(double[] inputWav, double dilatation) {
-        throw new UnsupportedOperationException(NOT_IMPLEMENTED);
+        // Nouvelle liste avec la taille dilatée
+        // Calculer le nombre d'échantillons
+        int nouvelleListe = (int)(inputWav.length * dilatation);
+        double[] output = new double[nouvelleListe];
+
+        int tailleNormale = inputWav.length;
+        int tailleDilatation = output.length;
+        int tailleSaut = 100; //100 ms
+        int tailleSautSamples = tailleSaut * StdAudio.SAMPLE_RATE / 1000;
+
+        for (int i = 0; i < tailleDilatation; i++) {
+            output[i] = inputWav[i * tailleSautSample];
+        }
+
+        return output;
+
     }
 
     /**
@@ -157,16 +172,16 @@ public class Pauvocoder {
         double[] echo = new double[wav.length + delaySamples];
 
         for (int i = 0; i < wav.length; i++) {
-            // Add the original signal
+        
             echo[i] += wav[i];
 
-            // Add the echo if within bounds
+            
             if (i + delaySamples < echo.length) {
                 echo[i + delaySamples] += wav[i] * attn;
             }
         }
 
-        // Ensure amplitude is within [-1, 1]
+        
         for (int i = 0; i < echo.length; i++) {
             if (echo[i] > 1.0) {
                 echo[i] = 1.0;
